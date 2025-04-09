@@ -1,0 +1,11 @@
+body {
+    font-family: sans-serif;
+    margin: 2rem;
+    background: #f9fafb;
+    color: #111827;
+  }
+  
+  #bar-chart, #line-chart {
+    margin-top: 2rem;
+  }
+  

@@ -1,0 +1,51 @@
+Film,Genre,Year,Combined Score,Positive/Negative,RT Combined Score,RT Critic Score,RT Audience Score,CinemaScore,CinemaScore (Adjusted),Letterboxd Score,Letterboxd Score (Adjusted),Metacritic Combined Score,Metacritic Critic Score,Metacritic Audience Score
+The Sting,Comedy,1973,86.8,Positive,94,93,95,N/A,N/A,4.2,84,82.5,83,82
+Blazing Saddles,Comedy,1974,80.3,Positive,90,89,91,N/A,N/A,3.8,76,75,73,77
+One Flew Over the Cuckoo's Nest,Drama,1975,89.5,Positive,94.5,93,96,N/A,N/A,4.4,88,86,84,88
+Rocky,Drama,1976,80.5,Positive,81,93,69,N/A,N/A,4.1,82,78.5,70,87
+Star Wars Ep. IV: A New Hope,Adventure,1977,89.3,Positive,94.5,93,96,N/A,N/A,4.2,84,89.5,90,89
+Grease,Musical,1978,73.3,Positive,76.5,66,87,N/A,N/A,3.5,70,73.5,70,77
+Moonraker,Action,1979,57.3,Negative,51,59,43,N/A,N/A,2.9,58,63,66,60
+Star Wars Ep V: The Empire Strikes Back,Adventure,1980,90.3,Positive,96,95,97,N/A,N/A,4.4,88,87,82,92
+Raiders of the Lost Ark,Adventure,1981,88.8,Positive,95,94,96,N/A,N/A,4.2,84,87.5,86,89
+E.T. the Extra-Terrestrial,Adventure,1982,82.8,Positive,85.5,99,72,N/A,N/A,3.8,76,87,92,82
+Star Wars Ep. VI: Return of the Jedi,Adventure,1983,80.3,Positive,88,82,94,N/A,N/A,4.1,82,71,58,84
+Indiana Jones and the Temple of Doom,Adventure,1984,72.8,Positive,79.5,77,82,N/A,N/A,3.6,72,67,57,77
+Back to the Future,Adventure,1985,88.8,Positive,94,93,95,N/A,N/A,4.2,84,88.5,87,90
+Top Gun,Action,1986,73.8,Positive,71,59,83,A,95,3.4,68,61,50,72
+Fatal Attraction,Thriller,1987,77.4,Positive,73,74,72,A,95,3.5,70,71.5,67,76
+Rain Man,Comedy,1988,83.5,Positive,89,88,90,A,95,3.9,78,72,65,79
+Indiana Jones and the Last Crusade,Adventure,1989,85.4,Positive,89,84,94,A,95,4.1,82,75.5,65,86
+Ghost,Drama,1990,76.5,Positive,77.5,75,80,A,95,3.5,70,63.5,52,75
+Terminator 2: Judgement Day,Action,1991,90.5,Positive,93,91,95,A+,100,4.3,86,83,75,91
+Aladdin,Animation,1992,89.4,Positive,94,96,92,A+,100,3.9,78,85.5,86,85
+Jurassic Park,Adventure,1993,86.6,Positive,91,91,91,A,95,4.1,82,78.5,68,89
+The Lion King,Animation,1994,91.5,Positive,93,93,93,A+,100,4.2,84,89,88,90
+Die Hard: With a Vengeance,Action,1995,76.1,Positive,71.5,60,83,A-,91,3.7,74,68,58,78
+Independence Day,Adventure,1996,74.3,Positive,71.5,68,75,A,95,3.3,66,64.5,59,70
+Titanic,Drama,1997,83.4,Positive,78.5,88,69,A+,100,3.8,76,79,75,83
+Armageddon,Adventure,1998,65.8,Positive,58,43,73,A-,91,3.1,62,52,42,62
+Star Wars Ep. I: The Phantom Menace,Adventure,1999,65.9,Positive,56,53,59,A-,91,3.0,60,56.5,51,62
+Mission: Impossible 2,Action,2000,61.6,Positive,49,56,42,B,85,2.7,54,58.5,59,58
+Harry Potter and the Sorcerer's Stone,Adventure,2001,81.0,Positive,81,80,82,A,95,3.8,76,72,65,79
+The Lord of the Rings: The Two Towers,Adventure,2002,91.9,Positive,95,95,95,A,95,4.4,88,89.5,87,92
+The Lord of the Rings: The Return of the King,Adventure,2003,93.5,Positive,90,94,86,A+,100,4.5,90,94,94,94
+Shrek 2,Animation,2004,84.0,Positive,79,89,69,A,95,4.1,82,80,75,85
+Harry Potter and the Goblet of Fire,Adventure,2005,83.0,Positive,81,88,74,A,95,3.8,76,80,81,79
+Pirates of the Caribbean: Dead Man's Chest,Adventure,2006,73.1,Positive,62.5,53,72,A-,91,3.7,74,65,53,77
+Pirates of the Caribbean: At World's End,Adventure,2007,70.0,Positive,57.5,43,72,A-,91,3.5,70,61.5,50,73
+The Dark Knight,Action,2008,91.8,Positive,94,94,94,A,95,4.5,90,88,84,92
+Avatar,Action,2009,81.6,Positive,81.5,81,82,A,95,3.6,72,78,83,73
+Toy Story 3,Animation,2010,89.8,Positive,94,98,90,A,95,4.0,80,90,92,88
+Harry Potter and the Deathly Hallows: Part II,Adventure,2011,87.9,Positive,92.5,96,89,A,95,4.0,80,84,85,83
+The Avengers,Action,2012,84.9,Positive,91,91,91,A+,100,3.7,74,74.5,69,80
+Frozen,Animation,2013,82.4,Positive,87,89,85,A+,100,3.4,68,74.5,75,74
+Transformers: Age of Extinction,Action,2014,51.4,Negative,34,18,50,A-,91,2.1,42,38.5,32,45
+Star Wars Ep. VII: The Force Awakens,Adventure,2015,80.6,Positive,88.5,93,84,A,95,3.3,66,73,80,66
+Captain America: Civil War,Action,2016,83.8,Positive,89.5,90,89,A,95,3.6,72,78.5,75,82
+Star Wars Ep. VIII: The Last Jedi,Adventure,2017,70.6,Positive,66,91,41,A,95,2.9,58,63.5,84,43
+Avengers: Infinity War,Action,2018,85.3,Positive,88.5,85,92,A,95,4.0,80,77.5,68,87
+Avengers Endgame,Action,2019,87.6,Positive,92,94,90,A+,100,3.9,78,80.5,78,83
+Demon Slayer: Kimetsu no Yaiba—The Movie: Mugen Train,Animation,2020,84.7,Positive,98.5,98,99,N/A,N/A,3.9,78,77.5,72,83
+Spider-Man: No Way Home,Action,2021,87.3,Positive,95,93,97,A+,100,3.8,76,78,71,85
+Avatar: The Way of Water,Action,2022,80.1,Positive,84,76,92,A,95,3.6,72,69.5,67,72

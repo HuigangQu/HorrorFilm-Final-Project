@@ -1,0 +1,51 @@
+Film,Genre,Year,Combined Score,Postive/Negative,RT Combined Score,RT Critic Score,RT Audience Score,CinemaScore,CinemaScore (Adjusted),Letterboxd Score,Letterboxd Score (Adjusted),Metacritic Combined Score,Metacritic Critic Score,Metacritic Audience Score
+The Exorcist,Horror,1973,81.8,Positive,82.5,78,87,N/A,N/A,4.0,80,83,83,83
+The Texas Chainsaw Massacre,Horror,1974,81.3,Positive,83,84,82,N/A,N/A,3.8,76,85,91,79
+Jaws,Horror,1975,86.3,Positive,94,97,91,N/A,N/A,3.9,78,87,87,87
+The Omen,Horror,1976,75.0,Positive,83,85,81,N/A,N/A,3.6,72,70,62,78
+Exorcist II: The Heretic (1977),Horror,1977,30.7,Negative,11.5,10,13,N/A,N/A,2.0,40,40.5,39,42
+Jaws 2,Horror,1978,53.8,Negative,48,56,40,N/A,N/A,2.7,54,59.5,51,68
+Alien,Horror,1979,89.5,Positive,93.5,93,94,N/A,N/A,4.3,86,89,89,89
+Friday the 13th,Horror,1980,55.5,Negative,63.5,67,60,N/A,N/A,3.0,60,43,22,64
+An American Werewolf in London,Horror,1981,76.0,Positive,87,89,85,N/A,N/A,3.8,76,65,55,75
+Poltergeist,Horror,1982,77.0,Positive,83.5,88,79,N/A,N/A,3.5,70,77.5,79,76
+Jaws 3-D,Horror,1983,27.5,Negative,14,11,17,N/A,N/A,1.7,34,34.5,27,42
+Friday the 13th Part IV: The Final Chapter,Horror,1984,49.8,Negative,37,22,52,N/A,N/A,3.1,62,50.5,33,68
+Day of the Dead,Horror,1985,74.0,Positive,80.5,86,75,N/A,N/A,3.8,76,65.5,60,71
+Poltergeist II: The Other Side,Horror,1986,54.6,Negative,27.5,20,35,B-,81,2.7,54,56,49,63
+Jaws 4: The Revenge,Horror,1987,34.0,Negative,8.5,2,15,C-,71,1.6,32,24.5,15,34
+A Nightmare on Elm Street 4: The Dream Master,Horror,1988,55.5,Negative,49,55,43,N/A,N/A,2.7,54,63.5,56,71
+Pet Sematary,Horror,1989,62.9,Positive,58,56,60,B,85,3.2,64,44.5,38,51
+Flatliners,Horror,1990,66.8,Positive,54.5,50,59,B+,88,3.2,64,60.5,55,66
+The Silence of the Lambs,Horror,1991,89.8,Positive,95,95,95,A-,91,4.3,86,87,86,88
+Bram Stroker's Dracula,Horror,1992,73.3,Positive,74,69,79,B-,81,3.7,74,64,57,71
+Army of Darkness,Horror,1993,73.5,Positive,77.5,68,87,N/A,N/A,3.7,74,69,59,79
+Interview with the Vampire,Horror,1994,75.8,Positive,74.5,63,86,B+,88,3.6,72,68.5,62,75
+Species,Horror,1995,57.0,Negative,36.5,42,31,B-,81,2.7,54,56.5,49,64
+Scream,Horror,1996,77.5,Positive,78.5,77,80,N/A,N/A,4.0,80,74,66,82
+Scream 2,Horror,1997,72.9,Positive,70,82,58,B+,88,3.3,66,67.5,62,73
+Urban Legend,Horror,1998,53.4,Negative,33.5,30,37,C,75,2.8,56,49,35,63
+The Blair Witch Project,Horror,1999,72.4,Positive,71.5,86,57,C+,78,3.3,66,74,80,68
+Hollow Man,Horror,2000,49.6,Negative,27,26,28,C,75,2.8,56,40.5,24,57
+Hannibal,Horror,2001,63.9,Positive,50.5,39,62,C+,78,3.3,66,61,57,65
+The Ring,Horror,2002,67.6,Positive,59.5,71,48,B-,81,3.3,66,64,57,71
+Gothika,Horror,2003,54.6,Negative,30,15,45,B,85,2.7,54,49.5,38,61
+The Grudge,Horror,2004,58.5,Negative,43,40,46,B-,81,2.8,56,54,49,59
+The Ring Two,Horror,2005,51.0,Negative,27,21,33,C+,78,2.4,48,51,44,58
+Saw III,Horror,2006,60.5,Positive,50,29,71,B,75,3.0,60,57,48,66
+Resident Evil: Extinction,Horror,2007,56.4,Negative,41,24,58,B-,81,2.6,52,51.5,41,62
+Saw V,Horror,2008,49.9,Negative,32.5,13,52,C,75,2.7,54,38,20,56
+Paranormal Activity,Horror,2009,64.7,Positive,70,83,57,N/A,N/A,2.9,58,66,68,64
+Resident Evil: Afterlife,Horror,2010,53.0,Negative,34.5,21,48,B-,81,2.5,50,46.5,37,56
+Paranormal Activity 3,Horror,2011,63.5,Positive,59,67,51,B-,81,2.7,54,60,59,61
+Resident Evil: Retribution,Horror,2012,53.1,Negative,39.5,28,51,C+,78,2.5,50,45,39,51
+The Conjuring,Horror,2013,80.1,Positive,84.5,86,83,A-,91,3.6,72,73,68,78
+Annabelle,Horror,2014,52.0,Negative,31.5,28,35,B,85,2.4,48,43.5,37,50
+Goosebumps,Horror,2015,71.1,Positive,70,78,62,A,95,2.8,56,63.5,60,67
+Resident Evil: The Final Chapter,Horror,2016,55.5,Negative,42.5,38,47,B,85,2.2,44,50.5,49,52
+It,Horror,2017,78.5,Positive,84.5,85,84,B+,88,3.4,68,73.5,69,78
+The Nun,Horror,2018,49.6,Negative,29.5,24,35,C,75,2.2,44,50,46,54
+It: Chapter Two,Horror,2019,69.3,Positive,70,62,78,B+,88,2.9,58,61,58,64
+The Invisible Man,Horror,2020,79.0,Positive,89.5,91,88,B+,88,3.4,68,70.5,72,69
+A Quiet Place: Part II,Horror,2021,80.5,Positive,91.5,91,92,A-,91,3.4,68,71.5,71,72
+Smile,Horror,2022,73.0,Positive,78,79,77,B-,91,2.8,56,67,68,66
