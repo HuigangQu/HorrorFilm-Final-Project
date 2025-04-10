@@ -150,9 +150,6 @@ function drawRadar(data, focusFilm) {
        .attr('stroke', '#007bff')
        .attr('stroke-width', 2);
     
-    // FIX: Don't render individual data points on the radar to avoid positioning issues
-    // Instead, create clearer radar visualization
-    
     // Add film information 
     svg.append('g')
        .attr('class', 'film-info')
