@@ -1,0 +1,166 @@
+/* Critic-Audience Comparison Section */
+.comparison-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+  }
+  
+  .comparison-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+  }
+  
+  .comparison-chart {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    flex: 1 1 600px;
+    max-width: 800px;
+    transition: transform 0.2s;
+  }
+  
+  .comparison-chart:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .section-description {
+    color: #666;
+    max-width: 700px;
+    margin: 0.5rem auto;
+  }
+  
+  .critic-higher {
+    fill: #4e79a7; /* blue for critics rating higher */
+  }
+  
+  .audience-higher {
+    fill: #e15759; /* red for audience rating higher */
+  }
+  
+  .comparison-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1rem 0;
+  }
+  
+  .comparison-legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+  
+  .legend-color-box {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    border-radius: 2px;
+  }
+  
+  .film-bar {
+    cursor: pointer;
+    transition: stroke-width 0.2s, opacity 0.2s;
+  }
+  
+  .film-bar:hover {
+    stroke: #333;
+    stroke-width: 1px;
+    opacity: 0.9;
+  }
+  
+  .score-label {
+    font-size: 10px;
+  }
+  
+  .film-label {
+    font-weight: 500;
+    font-size: 11px;
+  }
+  
+  .zero-line {
+    stroke: #000;
+    stroke-width: 1.5;
+  }
+  
+  .bar-chart-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+
+  
+
+  /* Comparison Controls */
+.comparison-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .control-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.9rem;
+    min-width: 150px;
+  }
+  
+  label {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  /* Vertical scrolling for charts with many films */
+  .comparison-chart {
+    max-height: 800px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  /* Make sure thin scrollbars look nice */
+  .comparison-chart::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .comparison-chart::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .comparison-chart::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
+  .comparison-chart::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
+  

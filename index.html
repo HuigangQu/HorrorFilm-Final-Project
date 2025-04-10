@@ -2,17 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Genre Rating Comparison</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="sentiment.css" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <h1>🎬 Genre Rating Comparison</h1>
-  <p>This prototype compares average horror vs. non-horror movie ratings across platforms.</p>
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading data...</p>
+  </div>
+  
+  <header>
+    <h1> Genre Rating Comparison</h1>
+    <p class="subtitle">Compare average ratings of horror vs. non-horror movies across multiple platforms.</p>
+  </header>
 
-  <div id="bar-chart"></div>
-  <div id="line-chart"></div>
+  <!-- Score selection buttons -->
+  <div class="controls-container">
+    <div id="score-buttons" class="btn-group"></div>
+    <div class="toggle-radar">
+      <button id="toggle-radar-btn"><i class="fas fa-chart-pie"></i> Toggle Radar</button>
+    </div>
+  </div>
 
+  <!-- Legend -->
+  <div id="legend-container" class="legend"></div>
+
+  <!-- Main graph container -->
+  <div class="chart-wrapper">
+    <div id="graph-container" class="flex-container"></div>
+  </div>
+
+
+  <!-- Sentiment -->
+  <section class="comparison-section">
+    <div class="section-header">
+      <h2>Critic vs Audience Comparison</h2>
+      <p class="section-description">See how critic and audience opinions differ across rating platforms</p>
+    </div>
+    
+    <!-- Control panel for sorting and filtering -->
+    <div class="comparison-controls">
+      <div class="control-group">
+        <label for="film-count">Films to display:</label>
+        <select id="film-count" class="control-select">
+          <option value="10">10 films</option>
+          <option value="20" selected>20 films</option>
+          <option value="50">50 films</option>
+          <option value="100">100 films</option>
+          <option value="all">All films</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="sort-method">Sort by:</label>
+        <select id="sort-method" class="control-select">
+          <option value="abs-diff" selected>Absolute difference</option>
+          <option value="critic-higher">Critics rate higher</option>
+          <option value="audience-higher">Audiences rate higher</option>
+          <option value="year-asc">Year (oldest first)</option>
+          <option value="year-desc">Year (newest first)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div id="comparison-container" class="comparison-container"></div>
+  </section>
+
+
+
+
+  <!-- Floating radar chart -->
+  <div id="radar-container">
+    <div class="radar-header">
+      <h2>Score Radar</h2>
+      <button id="close-radar" class="close-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="radar-content">
+      <svg id="radar-chart"></svg>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div id="tooltip" class="tooltip"></div>
+
+  <footer>
+    <div class="footer-content">
+      <p>Data source: Various movie rating platforms | Created with D3.js</p>
+      <p>Hover over data points to see detailed film information and radar chart comparison.</p>
+    </div>
+  </footer>
+
+  <script src="radar.js"></script>
   <script src="script.js"></script>
+  <script src="sentiment.js"></script>
 </body>
 </html>

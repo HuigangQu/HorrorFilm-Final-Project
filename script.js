@@ -1,228 +1,473 @@
-// Load both CSV files concurrently.
-Promise.all([
-    d3.csv("data/Project Data - Horror Movies.csv"),
-    d3.csv("data/Project Data - Non-Horror Movies.csv")
-  ]).then(([horrorData, nonHorrorData]) => {
-    
-    // Parse numeric values for each dataset.
-    horrorData.forEach(d => {
-      d.Year = +d.Year;
-      d["Combined Score"] = +d["Combined Score"];
-    });
-    nonHorrorData.forEach(d => {
-      d.Year = +d.Year;
-      d["Combined Score"] = +d["Combined Score"];
-    });
-    
-    // For the horror movies file, make sure to filter by Genre (if needed).
-    const horrorFilms = horrorData.filter(d => d.Genre === "Horror");
-    // For non‑horror movies we assume the file contains only non‑horror films.
-    
-    // Create a graph for each dataset.
-    const horrorGraph = createGraph(horrorFilms, "Horror Movies");
-    const nonHorrorGraph = createGraph(nonHorrorData, "Non‑Horror Movies");
-    
-    // Create an outer container with a flex layout to display graphs side-by-side.
-    const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.flexWrap = "wrap";
-    container.style.justifyContent = "space-around";
-    container.style.alignItems = "flex-start";
-    container.style.gap = "20px";
-    
-    container.appendChild(horrorGraph);
-    container.appendChild(nonHorrorGraph);
-    
-    // Append the container to the body.
-    document.body.appendChild(container);
-    
-  }).catch(error => {
-    console.error("Error loading CSV files:", error);
+// script.js - Main visualization controller
+
+// Score categories and their better color palette
+const SCORE_KEYS = [
+  'Combined Score',
+  'RT Critic Score',
+  'RT Audience Score',
+  'Metacritic Critic Score',
+  'Metacritic Audience Score',
+  'Letterboxd Score (Adjusted)',
+  'CinemaScore (Adjusted)'
+];
+
+// Color-blind friendly palette
+const SCORE_COLORS = [
+  '#4e79a7', // blue
+  '#f28e2c', // orange
+  '#e15759', // red
+  '#76b7b2', // teal
+  '#59a14f', // green
+  '#edc949', // yellow
+  '#af7aa1'  // purple
+];
+
+// Global state
+let state = {
+  activeKey: 'Combined Score',
+  showAllScores: false,
+  showRadar: false,
+  hoveredFilm: null,
+  horrorFilms: [],
+  nonHorrorFilms: []
+};
+
+// Initialize application
+document.addEventListener('DOMContentLoaded', () => {
+  initUI();
+  loadData();
+});
+
+// Set up UI elements
+function initUI() {
+  // Create score buttons
+  const btnGroup = d3.select('#score-buttons');
+  SCORE_KEYS.forEach((key, i) => {
+    btnGroup.append('button')
+            .text(formatButtonLabel(key))
+            .attr('data-key', key)
+            .style('border-color', SCORE_COLORS[i]);
   });
   
+  // Create "All Scores" button
+  btnGroup.append('button')
+          .text('All Scores')
+          .attr('id', 'btn-all');
   
-  /* ------------------------------
-     FUNCTION: createGraph
-     ------------------------------
-     Given an array of film objects and a title string, this function:
-     • Sorts films by release year.
-     • Computes per‑film label offsets and rotations based on whether the film’s
-       Combined Score is a local peak or valley.
-     • Creates an SVG line chart with circles and rotated text labels.
-     • Adds a replay button to re‐animate the line drawing.
-     • Wraps the SVG and button (with a title) in a container div and returns it.
-  --------------------------------- */
-  function createGraph(films, title) {
-    // Sort films in ascending order by Year.
-    films.sort((a, b) => a.Year - b.Year);
+  // Set up the legend
+  createLegend();
+  
+  // Set up radar toggle buttons
+  document.getElementById('toggle-radar-btn').addEventListener('click', toggleRadar);
+  document.getElementById('close-radar').addEventListener('click', hideRadar);
+  
+  // Set initial active button
+  d3.select(`button[data-key="${state.activeKey}"]`).classed('active', true);
+}
+
+// Format button labels to be more concise
+function formatButtonLabel(key) {
+  return key
+    .replace(' Score', '')
+    .replace('Adjusted', 'Adj.')
+    .replace('Audience', 'Aud.')
+    .replace('Critic', 'Crit.');
+}
+
+// Load and process the data
+function loadData() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  
+  Promise.all([
+    d3.csv('data/Project Data - Horror Movies.csv'),
+    d3.csv('data/Project Data - Non-Horror Movies.csv')
+  ])
+  .then(([horrorData, nonHorrorData]) => {
+    // Parse and clean data - with different handling for horror vs non-horror
+    const parseHorror = d => {
+      d.Year = +d.Year;
+      SCORE_KEYS.forEach(k => d[k] = +d[k]);
+      d.isPositive = d['Postive/Negative'] === 'Positive';
+      return d;
+    };
     
-    // Compute label offsets and rotations.
-    // For interior points: if a point’s score is higher than both neighbors, mark it as a peak.
-    // If it is lower than both neighbors, it’s a valley.
-    // For peaks, set labelOffset = –10 and rotation = 45°, for valleys, offset = +10 and rotation = –45°.
-    // For the first and last points (or neutral points) default to offset –10 and no rotation.
-    films.forEach((d, i, arr) => {
-      if (i > 0 && i < arr.length - 1) {
-        if (d["Combined Score"] > arr[i - 1]["Combined Score"] &&
-            d["Combined Score"] > arr[i + 1]["Combined Score"]) {
-          d.labelOffset = -10;
-          d.labelRotation = 0;
-        } else if (d["Combined Score"] < arr[i - 1]["Combined Score"] &&
-                   d["Combined Score"] < arr[i + 1]["Combined Score"]) {
-          d.labelOffset = 15;
-          d.labelRotation = 0;
-        } else {
-          d.labelOffset = -10;
-          d.labelRotation = 0;
-        }
-      } else {
-        d.labelOffset = -10;
-        d.labelRotation = 0;
-      }
-    });
+    const parseNonHorror = d => {
+      d.Year = +d.Year;
+      SCORE_KEYS.forEach(k => d[k] = +d[k]);
+      // FIX: For non-horror, calculate positivity based on Combined Score
+      // Assuming scores >= 70 are positive (industry standard)
+      d.isPositive = +d['Combined Score'] >= 70;
+      return d;
+    };
     
-    // Chart dimensions and margins.
-    const width = 928;
-    const height = 720;
-    const marginTop = 20;
-    const marginRight = 30;
-    const marginBottom = 30;
-    const marginLeft = 40;
+    // Filter and parse the data
+    state.horrorFilms = horrorData.filter(d => d.Genre === 'Horror').map(parseHorror);
+    state.nonHorrorFilms = nonHorrorData.map(parseNonHorror);
     
-    // Define positional scales.
-    const x = d3.scaleLinear()
-        .domain(d3.extent(films, d => d.Year)).nice()
-        .range([marginLeft, width - marginRight]);
+    // Initialize visualizations
+    updateVisualizations();
+    setupEventHandlers();
     
-    const y = d3.scaleLinear()
-        .domain([0, 100]) // Combined Score on a 0–100 scale.
-        .range([height - marginBottom, marginTop]);
+    // Hide loading overlay with animation
+    loadingOverlay.style.opacity = '0';
+    setTimeout(() => {
+      loadingOverlay.style.display = 'none';
+    }, 300);
+  })
+  .catch(error => {
+    console.error('Error loading data:', error);
+    loadingOverlay.innerHTML = `
+      <div class="error-message">
+        <h3>Error Loading Data</h3>
+        <p>${error.message}</p>
+        <button onclick="location.reload()">Try Again</button>
+      </div>
+    `;
+  });
+}
+
+// Set up event handlers for interactivity
+function setupEventHandlers() {
+  d3.selectAll('#score-buttons button').on('click', function() {
+    const button = d3.select(this);
+    const isAllButton = this.id === 'btn-all';
     
-    // Define the line generator using a smooth curve.
-    const lineGen = d3.line()
-        .curve(d3.curveCatmullRom)
-        .x(d => x(d.Year))
-        .y(d => y(d["Combined Score"]));
+    // Update active button UI
+    d3.selectAll('#score-buttons button').classed('active', false);
+    button.classed('active', true);
     
-    // Create the SVG element.
-    const svg = d3.create("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [0, 0, width, height])
-        .attr("style", "max-width: 100%; height: auto;");
-    
-    // Add the x-axis.
-    svg.append("g")
-        .attr("transform", `translate(0,${height - marginBottom})`)
-        .call(d3.axisBottom(x).ticks(width / 80).tickFormat(d3.format("d")))
-        .call(g => g.select(".domain").remove())
-        .call(g => g.selectAll(".tick line").clone()
-            .attr("y2", -height)
-            .attr("stroke-opacity", 0.1))
-        .call(g => g.append("text")
-            .attr("x", width - 4)
-            .attr("y", -4)
-            .attr("font-weight", "bold")
-            .attr("text-anchor", "end")
-            .attr("fill", "currentColor")
-            .text("Year"));
-    
-    // Add the y-axis.
-    svg.append("g")
-        .attr("transform", `translate(${marginLeft},0)`)
-        .call(d3.axisLeft(y).ticks(null).tickFormat(d => d))
-        .call(g => g.select(".domain").remove())
-        .call(g => g.selectAll(".tick line").clone()
-            .attr("x2", width)
-            .attr("stroke-opacity", 0.1))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 4)
-            .attr("text-anchor", "start")
-            .attr("font-weight", "bold")
-            .text("Combined Score"));
-    
-    // Append the line path.
-    const path = svg.append("path")
-        .datum(films)
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-width", 2.5)
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("d", lineGen);
-    
-    // Get the total length of the path (for animation purposes).
-    const totalLength = path.node().getTotalLength();
-    
-    // Define a function to replay the line-drawing animation.
-    function replayAnimation() {
-      path.interrupt()
-          .attr("stroke-dasharray", `0,${totalLength}`)
-        .transition()
-          .duration(5000)
-          .ease(d3.easeLinear)
-          .attr("stroke-dasharray", `${totalLength},${totalLength}`);
+    // Update state
+    state.showAllScores = isAllButton;
+    if (!isAllButton) {
+      state.activeKey = button.attr('data-key');
     }
-    // Immediately start the animation.
-    replayAnimation();
     
-    // Add circles at each data point.
-    svg.append("g")
-        .attr("fill", "white")
-        .attr("stroke", "black")
-        .attr("stroke-width", 2)
-      .selectAll("circle")
-      .data(films)
-      .join("circle")
-        .attr("cx", d => x(d.Year))
-        .attr("cy", d => y(d["Combined Score"]))
-        .attr("r", 3);
+    // Update visualizations based on new state
+    updateVisualizations();
+  });
+}
+
+// Create a legend
+function createLegend() {
+  const legend = d3.select('#legend-container');
+  
+  // Add legend for positive/negative ratings
+  legend.append('div')
+    .attr('class', 'legend-item')
+    .html(`
+      <div class="legend-color" style="background: var(--pos-color)"></div>
+      <div>Positive Rating</div>
+    `);
+  
+  legend.append('div')
+    .attr('class', 'legend-item')
+    .html(`
+      <div class="legend-color" style="background: var(--neg-color)"></div>
+      <div>Negative Rating</div>
+    `);
+  
+  // Add separator
+  legend.append('div')
+    .attr('class', 'legend-separator')
+    .style('width', '1px')
+    .style('height', '20px')
+    .style('background', '#ddd')
+    .style('margin', '0 10px');
+  
+  // Add legend for score types
+  SCORE_KEYS.forEach((key, i) => {
+    legend.append('div')
+      .attr('class', 'legend-item score-legend')
+      .attr('data-key', key)
+      .style('display', 'none') // Hidden initially
+      .html(`
+        <div class="legend-color" style="background: ${SCORE_COLORS[i]}"></div>
+        <div>${formatButtonLabel(key)}</div>
+      `);
+  });
+}
+
+// Update all visualizations
+function updateVisualizations() {
+  // Clear previous charts
+  d3.select('#graph-container').selectAll('*').remove();
+  
+  // Create new charts
+  createGraph(state.horrorFilms, 'Horror Movies', state.activeKey, state.showAllScores);
+  createGraph(state.nonHorrorFilms, 'Non-Horror Movies', state.activeKey, state.showAllScores);
+  
+  // Show/hide score legends
+  d3.selectAll('.score-legend').style('display', state.showAllScores ? 'flex' : 'none');
+  
+  // Update radar chart if visible
+  if (state.showRadar) {
+    const allFilms = [...state.horrorFilms, ...state.nonHorrorFilms];
+    drawRadar(allFilms, state.hoveredFilm);
+  }
+}
+
+// Toggle radar chart visibility
+function toggleRadar() {
+  state.showRadar = !state.showRadar;
+  const radarContainer = document.getElementById('radar-container');
+  
+  if (state.showRadar) {
+    radarContainer.classList.add('visible');
+    const allFilms = [...state.horrorFilms, ...state.nonHorrorFilms];
+    drawRadar(allFilms, state.hoveredFilm);
+  } else {
+    radarContainer.classList.remove('visible');
+  }
+}
+
+// Hide radar chart
+function hideRadar() {
+  state.showRadar = false;
+  document.getElementById('radar-container').classList.remove('visible');
+}
+
+// Create an individual graph visualization
+function createGraph(films, title, activeKey, showAllScores) {
+  // Sort films by year
+  films.sort((a, b) => a.Year - b.Year);
+  
+  // Chart dimensions
+  const width = 460, 
+        height = 320,
+        margin = {top: 40, right: 30, bottom: 40, left: 50};
+      
+  // Create scales
+  const x = d3.scaleLinear()
+      .domain(d3.extent(films, d => d.Year)).nice()
+      .range([margin.left, width - margin.right]);
+  
+  const y = d3.scaleLinear()
+      .domain([0, 100])
+      .range([height - margin.bottom, margin.top]);
+  
+  // Create SVG container with viewBox for responsiveness
+  const svg = d3.create('svg')
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('class', 'chart-svg');
+  
+  // Add background
+  svg.append('rect')
+     .attr('width', width)
+     .attr('height', height)
+     .attr('fill', '#fff');
+  
+  // Add grid lines
+  svg.append('g')
+     .attr('class', 'grid')
+     .attr('transform', `translate(0,${height - margin.bottom})`)
+     .call(d3.axisBottom(x)
+             .ticks(width/80)
+             .tickSize(-(height - margin.top - margin.bottom))
+             .tickFormat(''))
+     .call(g => g.select('.domain').remove());
+  
+  svg.append('g')
+     .attr('class', 'grid')
+     .attr('transform', `translate(${margin.left},0)`)
+     .call(d3.axisLeft(y)
+             .ticks(10)
+             .tickSize(-(width - margin.left - margin.right))
+             .tickFormat(''))
+     .call(g => g.select('.domain').remove());
+     
+  // Add X and Y axes
+  svg.append('g')
+     .attr('class', 'x-axis')
+     .attr('transform', `translate(0,${height - margin.bottom})`)
+     .call(d3.axisBottom(x)
+            .ticks(width/80)
+            .tickFormat(d3.format('d')));
+            
+  svg.append('g')
+     .attr('class', 'y-axis')
+     .attr('transform', `translate(${margin.left},0)`)
+     .call(d3.axisLeft(y));
+  
+  // Add axis labels
+  svg.append('text')
+     .attr('class', 'axis-label')
+     .attr('text-anchor', 'middle')
+     .attr('x', width / 2)
+     .attr('y', height - 5)
+     .text('Year');
+     
+  svg.append('text')
+     .attr('class', 'axis-label')
+     .attr('text-anchor', 'middle')
+     .attr('transform', 'rotate(-90)')
+     .attr('x', -height / 2)
+     .attr('y', 15)
+     .text('Score');
+  
+  // Determine which score keys to display
+  const keys = showAllScores ? SCORE_KEYS : [activeKey];
+  
+  // Draw line paths for each score
+  keys.forEach((key, idx) => {
+    // Filter out entries with NaN values
+    const validFilms = films.filter(d => !isNaN(d[key]));
     
-    // Add film name labels for each data point.
-    // Each text element is translated to its point (with an offset) and rotated by its computed angle.
-    const labels = svg.append("g")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", 10)
-      .selectAll("text")
-      .data(films)
-      .join("text")
-        .attr("text-anchor", "middle")
-        .attr("transform", d =>
-           `translate(${x(d.Year)},${y(d["Combined Score"]) + d.labelOffset}) rotate(${d.labelRotation})`
-        )
-        .attr("fill-opacity", 0)
-        .text(d => d.Film)
-        .attr("fill", "currentColor")
-        // Use a white stroke behind text for better readability.
-        .attr("stroke", "white")
-        .attr("paint-order", "stroke");
+    if (validFilms.length > 0) {
+      const lineGen = d3.line()
+          .defined(d => !isNaN(d[key]))
+          .curve(d3.curveCatmullRom)
+          .x(d => x(d.Year))
+          .y(d => y(d[key]));
+      
+      // Add line with animation
+      const path = svg.append('path')
+         .datum(validFilms)
+         .attr('fill', 'none')
+         .attr('stroke', SCORE_COLORS[SCORE_KEYS.indexOf(key)])
+         .attr('stroke-width', key === activeKey && !showAllScores ? 2.5 : 2)
+         .attr('d', lineGen);
+         
+      // Animate path drawing
+      const pathLength = path.node().getTotalLength();
+      path.attr('stroke-dasharray', pathLength)
+          .attr('stroke-dashoffset', pathLength)
+          .transition()
+          .duration(1000)
+          .ease(d3.easeLinear)
+          .attr('stroke-dashoffset', 0);
+    }
+  });
+  
+  // FIX: Only draw data points when NOT showing all scores
+  if (!showAllScores) {
+    const pointsGroup = svg.append('g').attr('class', 'data-points');
     
-    // Animate the appearance of the labels.
-    labels.transition()
-        .delay((d, i) => (i / films.length) * 5000)
-        .attr("fill-opacity", 1);
+    pointsGroup.selectAll('circle')
+       .data(films.filter(d => !isNaN(d[activeKey])))
+       .join('circle')
+         .attr('cx', d => x(d.Year))
+         .attr('cy', d => y(d[activeKey]))
+         .attr('r', 0) // Start with radius 0 for animation
+         .attr('fill', d => d.isPositive ? 'var(--pos-color)' : 'var(--neg-color)')
+         .attr('stroke', '#fff')
+         .attr('stroke-width', 1)
+         .transition() // Animate points appearing
+         .duration(1000)
+         .delay((d, i) => i * 30)
+         .attr('r', 5);
     
-    // Create a Replay button for this graph.
-    const replayButton = document.createElement("button");
-    replayButton.textContent = "Replay Animation";
-    replayButton.style.display = "block";
-    replayButton.style.margin = "20px auto";
-    replayButton.addEventListener("click", replayAnimation);
-    
-    // Wrap the graph in a container with a title and replay button.
-    const graphContainer = document.createElement("div");
-    graphContainer.style.margin = "10px";
-    graphContainer.style.flex = "1 1 auto";
-    graphContainer.style.maxWidth = "960px";
-    
-    const titleEl = document.createElement("h2");
-    titleEl.textContent = title;
-    titleEl.style.textAlign = "center";
-    
-    graphContainer.appendChild(titleEl);
-    graphContainer.appendChild(svg.node());
-    graphContainer.appendChild(replayButton);
-    
-    return graphContainer;
+    // Add interactivity to data points
+    pointsGroup.selectAll('circle')
+       .on('mouseover', (event, d) => {
+         // Update state and highlight point
+         state.hoveredFilm = d;
+         d3.select(event.target)
+           .transition()
+           .duration(200)
+           .attr('r', 8);
+         
+         // Update radar chart if visible
+         if (state.showRadar) {
+           drawRadar([...state.horrorFilms, ...state.nonHorrorFilms], d);
+         }
+         
+         // Show tooltip
+         showTooltip(event, d);
+       })
+       .on('mouseout', (event) => {
+         // Reset point size
+         d3.select(event.target)
+           .transition()
+           .duration(200)
+           .attr('r', 5);
+         
+         // Hide tooltip
+         hideTooltip();
+       })
+       .on('click', (event, d) => {
+         // Show radar and focus on this film
+         state.showRadar = true;
+         state.hoveredFilm = d;
+         document.getElementById('radar-container').classList.add('visible');
+         drawRadar([...state.horrorFilms, ...state.nonHorrorFilms], d);
+       });
   }
   
+  // Add title
+  svg.append('text')
+     .attr('class', 'chart-title')
+     .attr('x', width / 2)
+     .attr('y', 16)
+     .attr('text-anchor', 'middle')
+     .text(`${title} – ${showAllScores ? 'All Scores' : activeKey}`);
+  
+  // Create container and add SVG
+  const container = document.createElement('div');
+  container.className = 'chart-container';
+  container.style.flex = '1 1 440px';
+  container.appendChild(svg.node());
+  const graphContainer = document.getElementById('graph-container');
+  graphContainer.appendChild(container);
+
+  graphContainer.style.display = 'flex';
+  graphContainer.style.flexWrap = 'wrap';
+  graphContainer.style.justifyContent = 'center';
+}
+
+// Show tooltip with film details
+function showTooltip(event, d) {
+  const tooltip = d3.select('#tooltip');
+  
+  // Format content
+  let content = `
+    <h3>${d.Film} (${d.Year})</h3>
+    <div class="tooltip-row">
+      <span class="tooltip-label">Genre:</span>
+      <span>${d.Genre}</span>
+    </div>
+    <div class="tooltip-row">
+      <span class="tooltip-label">Rating:</span>
+      <span style="color: ${d.isPositive ? 'var(--pos-color)' : 'var(--neg-color)'}">
+        ${d.isPositive ? 'Positive' : 'Negative'}
+      </span>
+    </div>
+  `;
+  
+  // Add score details
+  SCORE_KEYS.forEach(key => {
+    if (!isNaN(d[key])) {
+      content += `
+        <div class="tooltip-row">
+          <span class="tooltip-label">${formatButtonLabel(key)}:</span>
+          <span>${Math.round(d[key])}</span>
+        </div>
+      `;
+    }
+  });
+  
+  // Position and show tooltip
+  tooltip
+    .html(content)
+    .style('left', `${event.pageX + 15}px`)
+    .style('top', `${event.pageY - 28}px`)
+    .style('opacity', 1);
+    
+  // Ensure tooltip doesn't overflow viewport
+  const tooltipNode = tooltip.node();
+  const tooltipRect = tooltipNode.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  
+  if (tooltipRect.right > viewportWidth) {
+    tooltip.style('left', `${event.pageX - tooltipRect.width - 10}px`);
+  }
+}
+
+// Hide tooltip
+function hideTooltip() {
+  d3.select('#tooltip').style('opacity', 0);
+}
+
+
+
