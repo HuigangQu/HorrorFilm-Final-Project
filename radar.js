@@ -103,7 +103,6 @@ function drawRadar(data, focusFilm) {
        })
        .attr('dominant-baseline', 'middle')
        .attr('font-size', '9px')
-       .attr('fill', '#555')
        .text(s.label);
   });
 
@@ -133,7 +132,7 @@ function drawRadar(data, focusFilm) {
        .attr('class', 'radar-area')
        .attr('d', d => radarLine(scores.map(s => ({value: +d[s.key] || 0}))))
        .attr('fill', '#bbb')
-       .attr('fill-opacity', 0.05)
+       .attr('fill-opacity', 0.01)
        .attr('stroke', '#999')
        .attr('stroke-width', 0.5)
        .attr('stroke-opacity', 0.3);
