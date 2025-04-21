@@ -99,13 +99,12 @@ const SCORE_KEYS = [
       const parseNonHorror = d => {
         d.Year = +d.Year;
         SCORE_KEYS.forEach(k => d[k] = +d[k]);
-        // For non-horror, calculate positivity based on Combined Score
-        d.isPositive = +d['Combined Score'] >= 70;
+        d.isPositive = d['Positive/Negative'] === 'Positive';
         return d;
       };
-      
+
       // Filter and parse the data
-      state.horrorFilms = horrorData.filter(d => d.Genre === 'Horror').map(parseHorror);
+      state.horrorFilms = horrorData.map(parseHorror);
       state.nonHorrorFilms = nonHorrorData.map(parseNonHorror);
       
       // Initialize visualizations

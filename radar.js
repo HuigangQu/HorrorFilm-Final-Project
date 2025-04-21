@@ -118,10 +118,13 @@ function drawRadar(data, focusFilm) {
      .attr('class', 'data-points')
      .attr('transform', `translate(${center},${center})`);
   
-  // Filter out entries with missing data
-  const validData = data.filter(d => 
-    scores.every(s => !isNaN(+d[s.key]))
-  );
+  const validData = data.map(d => {
+    scores.forEach(({ key }) => {
+      const n = Number(d[key]);
+      d[key] = Number.isNaN(n) ? 0 : n;
+    });
+    return d;
+  });
   
   if (validData.length > 0) {
     dataPoints.selectAll('.radar-area')
